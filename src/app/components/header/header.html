@@ -1,0 +1,28 @@
+<header class="header">
+  <div class="header-content">
+    <div class="logo">
+      <h1>ZenduForms</h1>
+    </div>
+    <nav class="navigation">
+      <ul class="nav-menu">
+        <li *ngFor="let item of menuItems" class="nav-item">
+          <a [routerLink]="item.route"
+             routerLinkActive="active"
+             [class.active]="isActive(item.route)"
+             class="nav-link">
+            <img [src]="item.icon" [alt]="item.label" class="nav-icon">
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="action-btn bell-btn" title="Notifications">
+        <img src="/assets/icons/icon-bell.svg" alt="Notifications" class="action-icon">
+      </button>
+      <button class="action-btn logout-btn" title="Logout">
+        <img src="/assets/icons/icon-logout.svg" alt="Logout" class="action-icon">
+      </button>
+    </div>
+  </div>
+</header>

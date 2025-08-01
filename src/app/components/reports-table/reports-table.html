@@ -1,0 +1,141 @@
+<div class="reports-container">
+  <!-- Search and Actions Section -->
+  <div class="actions-section">
+    <div class="search-section">
+                   <div class="search-input-wrapper">
+               <img src="/assets/icons/icon-search.svg" alt="Search" class="search-icon">
+        <input 
+          type="text" 
+          class="search-input"
+          [(ngModel)]="searchTerm" 
+          (input)="onSearch()"
+          placeholder="Search...">
+      </div>
+    </div>
+    
+    <div class="controls-section">
+      <button class="add-button">
+        <span class="add-icon">+</span>
+        <span class="add-text">Add new Report</span>
+      </button>
+      
+      <div class="sort-dropdown">
+        <label for="sort-select">Sort by:</label>
+        <select id="sort-select" [(ngModel)]="sortBy" (change)="onSort()" class="sort-select">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="name">Name</option>
+          <option value="owner">Owner</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports Table -->
+  <div class="table-container">
+    <div class="table-rows">
+      <div class="table-row-wrapper" 
+           *ngFor="let report of filteredReports; let i = index" 
+           [class.selected]="i === selectedRowIndex"
+           (click)="selectRow(i)"
+           (keydown.enter)="selectRow(i)"
+           (keydown.space)="selectRow(i)"
+           tabindex="0"
+           role="button"
+           [attr.aria-label]="'Select report: ' + report.name">
+        <table class="reports-table">
+          <tbody>
+            <tr class="report-row">
+              <td class="report-name-cell">
+                <div class="report-name-content">
+                  <img src="/assets/icons/icon-graph.svg" alt="Report" class="report-icon">
+                  <span class="report-name">{{ report.name }}</span>
+                </div>
+              </td>
+              <td class="created-cell">
+                <div class="cell-content">
+                  <span class="label">Created:</span>
+                  <span class="value">{{ formatDate(report.createdAt) }}</span>
+                </div>
+              </td>
+              <td class="modified-cell">
+                <div class="cell-content">
+                  <span class="label">Modified:</span>
+                  <span class="value">{{ formatDate(report.modifiedAt) }}</span>
+                </div>
+              </td>
+              <td class="owner-cell">
+                <div class="cell-content">
+                  <span class="label">Owner:</span>
+                  <span class="value">{{ report.owner }}</span>
+                </div>
+              </td>
+              <td class="form-cell">
+                <div class="cell-content">
+                  <span class="label">Form:</span>
+                  <a href="#" class="form-link">{{ report.associatedForm }}</a>
+                </div>
+              </td>
+              <td class="actions-cell">
+                <div class="action-buttons" *ngIf="i === selectedRowIndex">
+                  <button class="action-btn delete-btn" (click)="deleteReport(report)" title="Delete">
+                    <img src="/assets/icons/icon-trash.svg" alt="Delete" class="action-icon">
+                  </button>
+                  <button class="action-btn edit-btn" title="Edit">
+                    <img src="/assets/icons/icon-pencil.svg" alt="Edit" class="action-icon">
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-section">
+    <div class="pagination-info">
+      {{ getPageInfo() }}
+    </div>
+    
+    <div class="pagination-controls">
+      <button 
+        class="pagination-btn" 
+        [disabled]="currentPage === 0"
+        (click)="onPageChange(currentPage - 1)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of getPageNumbers()" 
+          class="page-btn"
+          [class.active]="page === currentPage + 1"
+          [class.ellipsis]="page === -1"
+          (click)="page !== -1 ? onPageChange(page - 1) : null">
+          {{ page === -1 ? '...' : page }}
+        </button>
+      </div>
+      
+      <button 
+        class="pagination-btn" 
+        [disabled]="currentPage >= getTotalPages() - 1"
+        (click)="onPageChange(currentPage + 1)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <app-delete-modal 
+    [isOpen]="showDeleteModal"
+    [itemName]="reportToDelete?.name || ''"
+    (deleteConfirmed)="onDeleteConfirm()"
+    (deleteCancelled)="onDeleteCancel()">
+  </app-delete-modal>
+</div>
